@@ -1,9 +1,9 @@
 import React from 'react'
 import Product from './Product'
-import classes from './ProductList.css'
+import './ProductList.css'
 function ProductList(props) {
     return ( 
-        <ul className={classes['movies-list']}>
+        <ul className='movies-list'>
             {props.products.map((product) =>(
                 <Product
                 key={product.productId}

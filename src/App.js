@@ -1,73 +1,24 @@
 import React from 'react';
-import {useState,useCallback,useEffect} from 'react'
-import ProductList from './components/Product/ProductList'
-import './App.css';
-import AddProduct from './components/Product/AddProduct';
+import { ColorModeContext,useMode } from './theme';
+import { CssBaseline,ThemeProvider } from '@mui/material';
+import { Theme } from '@fullcalendar/core/internal';
+import Topbar from "./scenes/global"
 function App() {
-
-  const [products, setProducts] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-
-  
-  const fetchProductsHandler = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('https://localhost:7158/api/products/');
-      if (!response.ok) {
-        throw new Error('Something went wrong!');
-      }
-      const result = await response.json();
-      const data = result.data
-      console.log(data)
-      setProducts(data);
-    } catch (error) {
-      setError(error.message);
-    }
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchProductsHandler();
-  }, [fetchProductsHandler]);
-
-  async function addProductHandler(product) {
-    const response = await fetch('https://localhost:7158/api/products/',{
-      method:'POST',
-      body: JSON.stringify(product),
-      headers:{
-        'Content-Type':'application/json'
-      }
-    });
-    const data = await response.json()
-    console.log(data)
-  }
-
-  let content = <p>Found no movies.</p>;
-  if (products.length > 0) {
-    content = <ProductList products={products} />;
-  }
-  if (error) {
-    content = <p>{error}</p>;
-  }
-  if (isLoading) {
-    content = <p>Loading...</p>;
-  }
+  const [theme,colorMode] = useMode()
   
 
-  return (
-    <React.Fragment>
-      <section>
-        <AddProduct onAddProduct={addProductHandler}/>
-      </section>
-      <section>
-        <button onClick={fetchProductsHandler}>Ürünleri Getir</button>
-      </section>
-      <section>
-        {content}
-      </section>
-    </React.Fragment> 
+  return (<ColorModeContext.Provider value={colorMode}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline/>
+      <div className='app'>
+        <main className='content'>
+          <Topbar/>
+        </main>
+      </div>
+      
+    </ThemeProvider>
+  </ColorModeContext.Provider>
+    
   );
 }
 
